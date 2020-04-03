@@ -1,0 +1,103 @@
+{% extends "base_generic.html" %} 
+{% block main_page_title %}
+    <strong>Monitoring: </strong>{{ device.get_title }}
+{% endblock %}
+
+{% block detail_monitoring %}
+    <h6 class="sidebar-heading d-flex justify-content-between align-items-center px-3 mt-4 mb-1 text-muted">
+    <span>Saved reports</span>
+    </h6>
+    <ul class="nav flex-column mb-2">
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'websiteapp:detail_device' device.get_uuid 'hour' %}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Last hour
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'websiteapp:detail_device' device.get_uuid 'day' %}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Last day
+        </a>
+    </li>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'websiteapp:detail_device' device.get_uuid 'week' %}">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-file-text"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+        Last week
+        </a>
+    </li>
+    <br>
+    <li class="nav-item">
+        <a class="nav-link" href="{% url 'api:report-api' device.get_uuid %}">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-bar-chart-2"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+          API format
+        </a>
+      </li>
+    </ul>
+{% endblock %}
+
+{% block content %} 
+    {% load static %}
+    <div class="row">
+        <div class="col-md-9">
+            <canvas id="myChart"></canvas>
+        </div>
+        <div class="col-md-3">
+            <form class="card p-2">
+                <div class="input-group">
+                    <div class="input-group-append col-md-6">
+                        <button type="submit" class="btn btn-primary btn-block my-breakwork">Turn on</button>
+                    </div>
+                    <div class="input-group-append col-md-6">
+                        <button type="submit" class="btn btn-secondary btn-block my-breakwork">Turn off</button>
+                    </div>
+                </div>
+                </form>
+            <ul class="list-group mb-3">
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
+                <div>
+                <span class="text-mute my-breakwork">Title</span>
+                </div>
+                <span class="text-muted my-breakwork">{{ device.get_title }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
+                <div>
+                <span class="text-mute my-breakwork">Measurement</span>
+                </div>
+                <span class="text-muted my-breakwork">{{ device.get_quantity }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
+                <div>
+                <span class="text-mute my-breakwork">Serial number</span>
+                </div>
+                <span class="text-muted my-breakwork">{{ device.get_serial_number }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between lh-condensed">
+                <div>
+                <span class="text-mute my-breakwork">Period of time</span>
+                </div>
+                <span class="text-muted my-breakwork">{{ timeperiod }}</span>
+            </li>
+            <li class="list-group-item d-flex justify-content-between">
+                <span class="my-breakwork">Total number of measurements: </span>
+                <strong class="my-breakwork">{{ total_measures }}</strong>
+            </li>
+            <li class="list-group-item d-flex justify-content-between bg-light">
+                <div>
+                    <span style="font-size: 13px" class="text-mute my-breakwork text-success">{{ device.get_uuid }} </span>
+                </div>
+            </li>
+            </ul>
+        </div>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.js"></script>
+    <script src="{% static 'js/chart.js' %}"></script>
+
+    <script>
+        var ctx = document.getElementById('myChart');
+        var times = JSON.parse('{{ times | safe }}');
+        var values = JSON.parse('{{ values | safe}}');
+        getchart("MYDEVICE", "myChart", times, values, '{{ device.get_quantity }}')
+    </script>
+{% endblock %}

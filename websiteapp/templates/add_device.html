@@ -1,0 +1,18 @@
+{% extends "base_generic.html" %}
+
+{% block main_page_title %}
+    Adding a New Device
+{% endblock %}
+
+{% block content %}
+    <form method="POST" class="form-horizontal post-form">
+        <form action="/thankyou/" method="post">
+            {% csrf_token %}
+            <table>
+            {{form.as_table}}
+        
+         </table>
+        <input type="submit" value="Submit" />
+    </form>
+
+{% endblock %}

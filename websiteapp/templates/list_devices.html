@@ -1,0 +1,36 @@
+{% extends "base_generic.html" %}
+
+{% block main_page_title %}
+    Devices
+{% endblock %}
+
+{% block content %}
+{% load static %}
+
+<div class="container">
+    <div class="row row-conformity row-centered">
+        <div class="col-xs-12 col-lg-4 my-auto">
+            <div class="jumbotron text-center my-auto ">
+                <h1>Add new device!</h1>
+                <p class="lead">Add your device and monitor the status online!</p>
+                <p><a class="btn btn-lg btn-success" href="{% url 'websiteapp:add_device_form' %}" role="button">Get started</a></p>
+            </div>
+        </div>
+        {% for device in device_list %}
+        <div class="col-xs-12 col-lg-4 my-auto">
+                <div class="card-header text-center">
+                    <h4 class="my-0 font-weight-normal">{{ device.title }}</h4>
+                </div>
+                <div class="card-body text-center">
+                    <img class="img-fluid img-circle" src="{% static 'img/plus.png' %}">
+                    <ul class="list-unstyled mt-3 mb-4">
+                        <li><b>Serial Number:</b> {{device.serial_number}} </li>
+                        <li><b>Measurements:</b> {{device.quantity}} </li>
+                    </ul>
+                    <a href="{{ device.get_absolute_url }}" class="btn btn-success stretched-link">More details</a>
+                </div>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
