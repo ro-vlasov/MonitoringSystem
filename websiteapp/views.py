@@ -56,7 +56,7 @@ class DetailDevice(LoginRequiredMixin, DetailView):
             queryset = Measurement.objects.filter(device_id=self.kwargs['pk'], time__gt=timestamp[0]).values_list('time', 'value').order_by('time')
             context['timeperiod'] = timestamp[1]
         else:
-            queryset = Measurement.objects.filter(device_id=self.kwargs['pk']).values_list('time', 'value')
+            queryset = Measurement.objects.filter(device_id=self.kwargs['pk']).values_list('time', 'value').order_by('time')
             context['timeperiod'] = timestamp[1]
         context['times'] = json.dumps([obj[0] for obj in queryset], default=str)
         context['values'] = json.dumps([obj[1] for obj in queryset])
