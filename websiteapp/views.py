@@ -49,7 +49,9 @@ class DetailDevice(LoginRequiredMixin, DetailView):
                 return (datetime.datetime.now() - datetime.timedelta(weeks=1), 'week')
         return (None, 'All the time')
 
-    def get_context_data(self, **kwargs):
+    def get_context_data(self, request, **kwargs):
+        if request.user != Device.objects.filter(dev_id=self.kwargs['pk']):
+            redirect('websiteapp:list_devices')
         context = super().get_context_data(**kwargs)
         timestamp = self.define_timestamp()
         if timestamp[0] != None:
