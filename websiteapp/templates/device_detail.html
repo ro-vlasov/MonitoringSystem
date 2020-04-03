@@ -1,4 +1,5 @@
 {% extends "base_generic.html" %} 
+
 {% block main_page_title %}
     <strong>Monitoring: </strong>{{ device.get_title }}
 {% endblock %}
@@ -37,6 +38,7 @@
 {% endblock %}
 
 {% block content %} 
+    {% if not failed %}
     {% load static %}
     <div class="row">
         <div class="col-md-9">
@@ -100,4 +102,5 @@
         var values = JSON.parse('{{ values | safe}}');
         getchart("MYDEVICE", "myChart", times, values, '{{ device.get_quantity }}')
     </script>
+    {% endif %}
 {% endblock %}

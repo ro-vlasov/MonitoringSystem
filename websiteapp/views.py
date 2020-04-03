@@ -50,9 +50,10 @@ class DetailDevice(LoginRequiredMixin, DetailView):
         return (None, 'All the time')
 
     def get_context_data(self, **kwargs):
-        if self.request.user != Device.objects.get(dev_id=self.kwargs['pk']).owner:
-            redirect('websiteapp:list_devices')
         context = super().get_context_data(**kwargs)
+        if self.request.user != Device.objects.get(dev_id=self.kwargs['pk']).owner:
+            context['failed'] = True
+            return context
         timestamp = self.define_timestamp()
         if timestamp[0] != None:
             queryset = Measurement.objects.filter(device_id=self.kwargs['pk'], time__gt=timestamp[0]).values_list('time', 'value').order_by('time')
