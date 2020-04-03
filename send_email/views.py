@@ -8,7 +8,7 @@ from datetime import datetime, timedelta, timezone
 def notificate(token, device, measure, email):
     title = "The device '" + device.title + "' displays strange values!"
     data_msg = """\
-Good day, %s! Please, check you device %s.\n \
+Good day, %s! Please, check you device %s.\n\
 It displays strange value: (value=%s, time=%s) \
 """ % (device.owner, device.title , measure['value'], measure['time'])
     user = Token.objects.get(key=token).user
