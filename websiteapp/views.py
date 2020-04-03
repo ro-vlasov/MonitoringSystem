@@ -53,7 +53,7 @@ class DetailDevice(LoginRequiredMixin, DetailView):
         context = super().get_context_data(**kwargs)
         timestamp = self.define_timestamp()
         if timestamp[0] != None:
-            queryset = Measurement.objects.filter(device_id=self.kwargs['pk'], time__gt=timestamp[0]).values_list('time', 'value')
+            queryset = Measurement.objects.filter(device_id=self.kwargs['pk'], time__gt=timestamp[0]).values_list('time', 'value').order_by('time')
             context['timeperiod'] = timestamp[1]
         else:
             queryset = Measurement.objects.filter(device_id=self.kwargs['pk']).values_list('time', 'value')
