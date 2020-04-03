@@ -34,7 +34,6 @@ function getchart(devicename, chartname, times, values, measure) {
                             fontSize: 15
                         }, 
                         type: 'time',
-                        distribution: 'series'
                     }
                     ],
                     yAxes: 
