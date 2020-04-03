@@ -1,7 +1,10 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from django.views.generic import ListView, DetailView
+from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.forms import UserCreationForm
+from rest_framework.authtoken.models import Token
 from .models import Device, Measurement
 from django.shortcuts import render
 from .forms import AddDeviceForm
@@ -62,10 +65,24 @@ class DetailDevice(LoginRequiredMixin, DetailView):
         return context
  
 
-class Integration(LoginRequiredMixin, View):
+class Integration(View):
     template_name = 'integration.html'
 
     def get(self, request):
-        token = request.user.auth_token.key
-        date_dict = {'token': token}
-        return render(request, 'integration.html', context=date_dict)
+        data_dict = {'token' : "None"}
+        if request.user.is_authenticated:
+            token = token = Token.objects.get_or_create(user=request.user)
+            data_dict['token'] = token[0]
+        return render(request, 'integration.html', context=data_dict)
+
+
+def signup_view(request):
+    form = UserCreationForm(request.POST)
+    if form.is_valid():
+        form.save()
+        username = form.cleaned_data.get('username')
+        password = form.cleaned_data.get('password1')
+        user = authenticate(username=username, password=password)
+        login(request, user)
+        return redirect('websiteapp:integration')
+    return render(request, 'signup.html', {'form': form})

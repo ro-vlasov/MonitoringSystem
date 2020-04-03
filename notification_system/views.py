@@ -43,7 +43,7 @@ class DeviceView(APIView):
         return Response({"Measurements": serializer.data})
     
     def post(self, request, *args, **kwargs):
-        request_data = json.loads(request.data)
+        request_data = request.data
         if self.valid_request_post(request_data, kwargs['pk']):
             measure = request_data.get('data')
             measure['device_id'] = Device.objects.filter(dev_id=kwargs['pk']).get().dev_id
@@ -70,10 +70,11 @@ class LoginView(APIView):
     authentication_classes = ()
 
     def post(self, request,):
-        username = request.data.get("username")
-        password = request.data.get("password")
+        username = str(request.data.get("username"))
+        password = str(request.data.get("password"))
         user = authenticate(username=username, password=password)
+        token = Token.objects.get_or_create(user=user)
         if user:
-            return Response({"token": user.auth_token.key})
+            return Response({"token": str(token[0])})
         else:
             return Response({"error": "Wrong Credentials"}, status=status.HTTP_400_BAD_REQUEST)
