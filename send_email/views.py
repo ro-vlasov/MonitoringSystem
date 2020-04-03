@@ -11,12 +11,11 @@ def notificate(token, device, measure, email):
 Good day, %s! Please, check you device %s.\n \
 It displays strange value: (value=%s, time=%s) \
 """ % (device.owner, device.title , measure['value'], measure['time'])
-
-    user = Token.objects.filter(key=token).get().user
-    query = MailTimeBase.objects.filter(user=user)
-    if len(query) == 0:
+    user = Token.objects.get(key=token).user
+    query = MailTimeBase.objects.get(user=user)
+    if query == MailTimeBase.objects.none():
         query = MailTimeBase.objects.create(user=user, time=datetime.now(timezone.utc))
-    mailtimeobj = query.get()
+    mailtimeobj = query
     now = datetime.now(timezone.utc)
     if now - mailtimeobj.time >= timedelta(minutes=5):
         mailtimeobj.time = datetime.now(timezone.utc)
