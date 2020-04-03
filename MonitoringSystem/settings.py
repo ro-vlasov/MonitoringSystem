@@ -28,7 +28,7 @@ SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', '894%hwrgrkc^qzrwy)w55i92!6j+6b
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = bool( os.environ.get('DJANGO_DEBUG', True) )
 
-ALLOWED_HOSTS = ['enigmatic-everglades-21346.herokuapp.com','localhost']
+ALLOWED_HOSTS = ['enigmatic-everglades-21346.herokuapp.com','localhost', '127.0.0.1']
 
 
 # Application definition
@@ -43,7 +43,9 @@ INSTALLED_APPS = [
     'websiteapp',
     'notification_system',
     'rest_framework',
-    'rest_framework.authtoken'
+    'rest_framework.authtoken',
+    'send_email'
+    
 ]
 
 MIDDLEWARE = [
@@ -132,6 +134,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+STATIC_ROOT = 'staticfiles'
 
 LOGIN_REDIRECT_URL = '/devices'
 
@@ -150,3 +153,13 @@ REST_FRAMEWORK = {
 import dj_database_url
 db_from_env = dj_database_url.config(conn_max_age=500)
 DATABASES['default'].update(db_from_env)
+
+
+# Send mail
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'djangomonitoringsystem@gmail.com'
+EMAIL_HOST_PASSWORD = 'Django2000'
+DEFAULT_FROM_EMAIL = 'Roman Vlasov'
+DEFAULT_TO_EMAIL = 'djangomonitoringsystem@gmail.com'

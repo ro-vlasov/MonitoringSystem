@@ -24,6 +24,9 @@ class Device(models.Model):
         default=uuid.uuid4, 
         help_text="Unique ID for this particular Device"
     )
+    border_value = models.FloatField(
+        max_length=100
+    )
 
     def get_absolute_url(self):
         return reverse('websiteapp:detail_device', args=[str(self.dev_id), 'alltime'])
@@ -40,6 +43,9 @@ class Device(models.Model):
     def get_uuid(self):
         return self.dev_id
 
+    def get_border_value(self):
+        return self.border_value
+        
     def __str__(self):
         return ' '.join([self.title, self.serial_number, self.quantity])
 
@@ -47,7 +53,7 @@ class Measurement(models.Model):
     time = models.DateTimeField(
         null=True,
     )
-    value = models.CharField(
+    value = models.FloatField(
         max_length=100
     )
     device_id = models.ForeignKey(
@@ -56,9 +62,12 @@ class Measurement(models.Model):
         to_field='dev_id',
         default=uuid.uuid4,
     )
+    ip_feedback = models.GenericIPAddressField(
+        null=True
+    )
 
     def __str__(self):
-        return ' '.join([self.value, str(self.time)])
+        return ' '.join([str(self.value), str(self.time)])
 
 
 

@@ -4,10 +4,12 @@ from django.views.generic import ListView, DetailView
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse
+from django.views.generic.edit import CreateView
 from rest_framework.authtoken.models import Token
 from .models import Device, Measurement
 from django.shortcuts import render
-from .forms import AddDeviceForm
+from .forms import AddDeviceForm, UserCreationForm
 import datetime
 import json
 
@@ -42,11 +44,11 @@ class DetailDevice(LoginRequiredMixin, DetailView):
         if 'timestamp' in self.kwargs.keys():
             timest = self.kwargs['timestamp'].lower()
             if timest == 'hour':
-                return (datetime.datetime.now() - datetime.timedelta(hours=1), 'hour')
+                return (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(hours=1), 'hour')
             if timest == 'day':
-                return (datetime.datetime.now() - datetime.timedelta(days=1), 'day')
+                return (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=1), 'day')
             if timest == 'week':
-                return (datetime.datetime.now() - datetime.timedelta(weeks=1), 'week')
+                return (datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(weeks=1), 'week')
         return (None, 'All the time')
 
     def get_context_data(self, **kwargs):
@@ -77,15 +79,13 @@ class Integration(View):
             token = token = Token.objects.get_or_create(user=request.user)
             data_dict['token'] = token[0]
         return render(request, 'integration.html', context=data_dict)
+from django.urls import reverse_lazy
+
+success_url = reverse_lazy('login')
+
+class Signup(CreateView):
+    form_class = UserCreationForm
+    template_name = 'signup.html'
+    success_url = reverse_lazy('login')
 
 
-def signup_view(request):
-    form = UserCreationForm(request.POST)
-    if form.is_valid():
-        form.save()
-        username = form.cleaned_data.get('username')
-        password = form.cleaned_data.get('password1')
-        user = authenticate(username=username, password=password)
-        login(request, user)
-        return redirect('websiteapp:integration')
-    return render(request, 'signup.html', {'form': form})

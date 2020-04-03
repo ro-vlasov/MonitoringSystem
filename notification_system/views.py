@@ -1,4 +1,5 @@
 from websiteapp.models import Device, Measurement
+from send_email.views import notificate
 from django.http import HttpResponse
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate
@@ -30,9 +31,14 @@ class DeviceView(APIView):
             if len(device) != 0 and len(token) != 0:
                 if token.get().user == device.get().owner:
                     return True
-                # device and user exist
+                    # device and user exist
         else:
             return False
+
+    def notificate(self, token, measure, device):
+        if float(measure['value']) > device.border_value:
+            email = Token.objects.filter(key=token).get().user.email
+            notificate(token, device, measure, email)
 
     def get(self, request, *args, **kwargs):
         if self.valid_request_get(request, kwargs['pk']):
@@ -45,12 +51,16 @@ class DeviceView(APIView):
     def post(self, request, *args, **kwargs):
         request_data = request.data
         if self.valid_request_post(request_data, kwargs['pk']):
+            # set data
             measure = request_data.get('data')
-            measure['time'] = datetime.datetime.now()
-            measure['device_id'] = Device.objects.filter(dev_id=kwargs['pk']).get().dev_id
+            device = Device.objects.filter(dev_id=kwargs['pk']).get()
+            measure['device_id'] = device.dev_id
+            # create new ex
             serializer = MeasurementsSerializer(data=measure)
             if serializer.is_valid(raise_exception=True):
                 measure_saved = serializer.save()
+                # notificate
+                self.notificate(request_data.get('token'), measure, device)
                 return Response({"success": "New measurement"})
         else:
                 return Response({"error": "Can't POST"})
