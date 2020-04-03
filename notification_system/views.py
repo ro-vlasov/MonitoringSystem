@@ -46,6 +46,7 @@ class DeviceView(APIView):
         request_data = request.data
         if self.valid_request_post(request_data, kwargs['pk']):
             measure = request_data.get('data')
+            measure['time'] = datetime.datetime.now()
             measure['device_id'] = Device.objects.filter(dev_id=kwargs['pk']).get().dev_id
             serializer = MeasurementsSerializer(data=measure)
             if serializer.is_valid(raise_exception=True):
